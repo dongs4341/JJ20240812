@@ -1,5 +1,6 @@
 import "./App.css";
 import {useState} from "react";
+import ItemRow from "./itemRow";
 
 const App = ()=>{
     // 전역변수를 state로 만들어 주어야 re rendering 된다.
@@ -14,6 +15,10 @@ const App = ()=>{
     const [noCnt, setNoCnt] = useState(105);
 
     const [inputTitle, setInputTtile] = useState("");
+    const [outputTitle, setOutputTtile] = useState("");
+
+
+    const [flag, setFlag] = useState(false);
 
     const onClickEvent = () => {
         // 기존 내용에 새 내용을 추가 해서 새 배열을 생성
@@ -41,6 +46,18 @@ const App = ()=>{
             }
         });
         setTodoLilst(newTodoList);
+    };
+
+    const onEdit = ({no, title, done})=>{
+        const newTodoList = [...todoList];
+        todoList.forEach((item, idx)=> {
+            if(item.no == no) {
+                newTodoList[idx].done = done;
+                newTodoList[idx].title = title;
+            }
+        });
+        setTodoLilst(newTodoList);
+        console.log(newTodoList);
     };
 
     // 취소선 스타일 설정
@@ -74,23 +91,7 @@ const App = ()=>{
                 {todoList.map((item)=> {
                     return(<tr key={item.no}>
                         <td colSpan={3} style={{padding:"0px"}}>
-                        <div className="input-group mb-3">
-                              <div className="input-group-prepend">
-                                <div className="input-group-text">
-                                <input onChange={()=>{
-                                    onDoneFlag(item);
-                                }} checked={item.done&&"checked"} type="checkbox" />
-                                </div>
-                              </div>
-                                <input style={ item.done?lineThroughClass:{}} type="text" className="form-control" readOnly value={item.title} />
-                                <div className="input-group-append">
-                                    <button className="btn btn-primary" type="button">Edit</button>  
-                                    <button onClick={()=>{
-                                        onDelete(item);
-                                    }} className="btn btn-danger" 
-                                    type="button">Delete</button>  
-                              </div>
-                            </div>
+                            <ItemRow item={item} onDoneFlag={onDoneFlag} onDelete={onDelete} onEdit={onEdit} />
                         </td>
                     </tr>)
                 })}
